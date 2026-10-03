@@ -45,7 +45,7 @@ CurrentUser = Annotated[str, Depends(get_current_user)]
 
 @lru_cache(maxsize=1)
 def _load_bg_vip() -> Image.Image:
-    return Image.open("static/B1.jpg").convert("RGBA")
+    return Image.open("static/B1N.jpg").convert("RGBA")
 
 @lru_cache(maxsize=1)
 def _load_bg_normal() -> Image.Image:
