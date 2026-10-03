@@ -244,13 +244,19 @@ async def lottery_generate(
     
     parsed_items.sort(key=lambda x: x["time"] if x["time"] else "99:99")
 
-    # ฟังก์ชันช่วยเลือกวาดตามเงื่อนไขชื่อ VIP
+    # ฟังก์ชันช่วยเลือกวาดตามเงื่อนไขที่กำหนด
     def generate_bytes_for_item(name_str):
-        if "VIP" in name_str.upper() or "วีไอพี" in name_str:
-            # VIP สลับไปเรียกใช้งานใบ B2 (create_image_normal)
+        # กำหนดรายชื่อหวยที่จะใช้ใบ B2 (VIP)
+        vip_list = [
+            "ฮานอยพิเศษ", "ฮานอยสามัคคี", "ฮานอยปกติ", 
+            "ฮานอย VIP", "ฮานอยพัฒนา", "ลาวพัฒนา", "รัฐบาลไทย"
+        ]
+        
+        if name_str in vip_list:
+            # ถ้าชื่อตรงกับในลิสต์ -> ใช้ใบ B2 (create_image_normal)
             return create_image_normal(name_str, n_main1, n_pair1, n_pair2, n_pair3, n_pair4, n_pair5, n_pair6, fournum)
         else:
-            # หวยปกติ สลับไปเรียกใช้งานใบ B1 (create_image_vip)
+            # หวยอื่นๆ ที่เหลือทั้งหมด -> ใช้ใบ B1 (create_image_vip)
             return create_image_vip(name_str, v_main1, v_main2, v_pair1, v_pair2, v_pair3, v_pair4, v_pair5, v_pair6, triple1, triple2, triple3)
 
     if len(parsed_items) == 1:
