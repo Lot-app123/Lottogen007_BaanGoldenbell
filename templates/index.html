@@ -838,13 +838,19 @@ function renderList() {
 
   let filtered = setData.items;
 
+  // รายชื่อหวยที่ต้องการให้เป็น VIP (ใบ B2)
+  const vipList = [
+    "ฮานอยพิเศษ", "ฮานอยสามัคคี", "ฮานอยปกติ", 
+    "ฮานอย VIP", "ฮานอยพัฒนา", "ลาวพัฒนา", "รัฐบาลไทย"
+  ];
+
   // 1. กรองตาม Template ที่เลือก
   if (currentUiTemplate === 'vip') {
-    // โหมด VIP: โชว์เฉพาะอันที่มีคำว่า VIP หรือ วีไอพี
-    filtered = filtered.filter(i => i.name.toUpperCase().includes('VIP') || i.name.includes('วีไอพี'));
+    // โหมด VIP: โชว์เฉพาะหวยที่มีชื่อตรงกับใน vipList
+    filtered = filtered.filter(i => vipList.includes(i.name));
   } else if (currentUiTemplate === 'normal') {
-    // โหมดปกติ: โชว์เฉพาะอันที่ "ไม่มี" คำว่า VIP หรือ วีไอพี
-    filtered = filtered.filter(i => !i.name.toUpperCase().includes('VIP') && !i.name.includes('วีไอพี'));
+    // โหมดปกติ: โชว์เฉพาะหวยที่ "ไม่อยู่" ใน vipList
+    filtered = filtered.filter(i => !vipList.includes(i.name));
   }
 
   // 2. กรองตามคำค้นหา (Search)
