@@ -506,13 +506,13 @@ header {
         <!-- รูปที่ 1: ปกติ (B1) -->
         <div class="template-img-container" id="container-b1" onclick="switchInputTemplate('normal')" style="cursor: pointer; position: relative; width: 48%; transition: 0.2s; opacity: 0.5;">
           <img src="/static/B1N.jpg" style="width: 100%; border-radius: 8px; border: 3px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--muted);">⚪ ปกติ (B1)</div>
+          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--muted);">⚪ ปกติ</div>
         </div>
 
         <!-- รูปที่ 2: VIP (B2) -->
         <div class="template-img-container" id="container-b2" onclick="switchInputTemplate('vip')" style="cursor: pointer; position: relative; width: 48%; transition: 0.2s;">
           <img src="/static/B2.jpg" style="width: 100%; border-radius: 8px; border: 3px solid var(--gold); box-shadow: 0 4px 20px rgba(240,192,64,0.4);">
-          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--gold);">🟡 VIP (B2)</div>
+          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--gold);">🔴 VIP</div>
         </div>
       </div>
     </div>
@@ -680,67 +680,55 @@ header {
 <script>
 const SETS = [
   {
-    label: 'เช้า',
+    label: 'SET 1',
     items: [
-      { name: 'ลาว EXTRA',        time: '08:25' },
+      { name: 'ดาวโจนส์',            time: '04:00' },
+      { name: 'ดาวโจนส์ VIP',        time: '04:00' },
+      { name: 'ดาวโจนส์ STAR',       time: '04:30' },
+      { name: 'ลาว EXTRA',          time: '08:25' },
       { name: 'นิเคอิเช้า VIP',      time: '09:00' },
-      { name: 'ฮานอยอาเซียน',      time: '09:10' },
+      { name: 'ฮานอยอาเซียน',        time: '09:10' },
       { name: 'นิเคอิเช้า',          time: '09:25' },
-      { name: 'จีนเช้า VIP',        time: '10:00' },
-      { name: 'ไทยเช้า',           time: '10:00' },
-      { name: 'จีนเช้า',            time: '10:20' },
-      { name: 'ลาว TV',           time: '10:25' },
-      { name: 'ฮั่งเส็งเช้า VIP',     time: '10:30' },
-      { name: 'ฮั่งเส็งเช้า',         time: '10:55' },
-      { name: 'ฮานอย HD',         time: '11:10' },
-      { name: 'ไต้หวัน VIP',        time: '11:30' },
+      { name: 'จีนเช้า VIP',         time: '10:00' },
+      { name: 'ไทยเช้า',         time: '10:00' },
+      { name: 'จีนเช้า',             time: '10:20' },
+      { name: 'ลาว TV',              time: '10:25' },
+      { name: 'ฮั่งเส็งเช้า VIP',    time: '10:30' },
+      { name: 'ฮั่งเส็งเช้า',        time: '10:55' },
+      { name: 'ฮานอย HD',            time: '11:10' },
+      { name: 'ไต้หวัน VIP',         time: '11:30' },
       { name: 'ลาวพิเศษรอบเที่ยง',   time: '11:30' },
-      { name: 'ไต้หวัน',            time: '12:00' },
-      { name: 'ฮานอยสตาร์',        time: '12:30' },
+      { name: 'ไต้หวัน',             time: '12:00' },
+      { name: 'ฮานอยสตาร์',          time: '12:30' },
       { name: 'ไทยเที่ยง',          time: '12:30' },
-      { name: 'เกาหลี VIP',        time: '12:30' },
-    ]
-  },
-  {
-    label: 'บ่าย',
-    items: [
-      { name: 'เกาหลี',            time: '13:00' },
+      { name: 'เกาหลี VIP',          time: '12:30' },
+      { name: 'เกาหลี',              time: '13:00' },
       { name: 'นิเคอิบ่าย',          time: '13:30' },
       { name: 'นิเคอิบ่าย VIP',      time: '13:30' },
-      { name: 'ลาว HD',           time: '14:00' },
-      { name: 'จีนบ่าย',            time: '14:00' },
-      { name: 'ฮานอย TV',         time: '14:30' },
-      { name: 'ไทยบ่าย',           time: '14:30' },
-      { name: 'จีนบ่าย VIP',        time: '14:45' },
-      { name: 'ฮั่งเส็งบ่าย',         time: '15:00' },
-      { name: 'ฮั่งเส็งบ่าย VIP',     time: '15:00' },
-      { name: 'ลาวสตาร์',          time: '15:00' },
-      { name: 'ไทยเย็น',           time: '15:00' },
-      { name: 'สิงคโปร์',           time: '16:00' },
-      { name: 'ฮานอยกาชาด',       time: '16:00' },
-      { name: 'สิงคโปร์ VIP',       time: '16:30' },
-    ]
-  },
-  {
-    label: 'นอย-ลาว',
-    items: [
-      { name: 'ฮานอยพิเศษ',        time: '16:30' },
-      { name: 'ไทยเย็น',           time: '16:30' },
-      { name: 'ฮานอยสามัคคี',       time: '17:00' },
-      { name: 'อินเดีย',            time: '17:00' },
-      { name: 'ฮานอยปกติ',         time: '18:00' },
-      { name: 'มาเลย์',            time: '18:00' },
+      { name: 'ลาว HD',              time: '14:00' },
+      { name: 'จีนบ่าย',             time: '14:00' },
+      { name: 'ฮานอย TV',            time: '14:30' },
+      { name: 'ไทยบ่าย',            time: '14:30' },
+      { name: 'จีนบ่าย VIP',         time: '14:45' },
+      { name: 'ฮั่งเส็งบ่าย',        time: '15:00' },
+      { name: 'ฮั่งเส็งบ่าย VIP',    time: '15:00' },
+      { name: 'ลาวสตาร์',            time: '15:00' },
+      { name: 'ไทยเย็น',             time: '15:00' },
+      { name: 'สิงคโปร์',            time: '16:00' },
+      { name: 'ฮานอยกาชาด',          time: '16:00' },
+      { name: 'สิงคโปร์ VIP',        time: '16:30' },
+      { name: 'ฮานอยพิเศษ',          time: '16:30' },
+      { name: 'ไทยเย็น',          time: '16:30' },
+      { name: 'ฮานอยสามัคคี',        time: '17:00' },
+      { name: 'อินเดีย',             time: '17:00' },
+      { name: 'ฮานอยปกติ',           time: '18:00' },
+      { name: 'มาเลย์',              time: '18:00' },
       { name: 'อียิปต์',             time: '19:00' },
-      { name: 'ฮานอย VIP',        time: '19:00' },
-      { name: 'ฮานอยพัฒนา',        time: '19:30' },
-      { name: 'ลาวสามัคคี',         time: '20:00' },
-      { name: 'ลาวพัฒนา',          time: '20:30' },
-      { name: 'ลาวอาเซียน',        time: '21:00' },
-    ]
-  },
-  {
-    label: 'ดึก',
-    items: [
+      { name: 'ฮานอย VIP',           time: '19:00' },
+      { name: 'ฮานอยพัฒนา',          time: '19:30' },
+      { name: 'ลาวสามัคคี',          time: '20:00' },
+      { name: 'ลาวพัฒนา',            time: '20:30' },
+      { name: 'ลาวอาเซียน',          time: '21:00' },
       { name: 'ลาว VIP',             time: '21:00' },
       { name: 'ลาวสามัคคี VIP',      time: '21:30' },
       { name: 'ลาว STAR VIP',        time: '21:30' },
@@ -752,10 +740,59 @@ const SETS = [
       { name: 'เยอรมัน',             time: '23:00' },
       { name: 'ลาวกาชาด',            time: '23:00' },
       { name: 'ยูโร',                time: '23:30' },
-      { name: 'รัสเซีย VIP',         time: '23:30' },
-      { name: 'ดาวโจนส์',            time: '04:00' },
-      { name: 'ดาวโจนส์ VIP',        time: '04:00' },
-      { name: 'ดาวโจนส์ STAR',       time: '04:30' },
+      { name: 'รัสเซีย VIP',         time: '23:30' }
+    ]
+  },
+  {
+    label: 'SET 2',
+    items: [
+      { name: 'ธกส',       time: '' },
+      { name: 'ออมสิน',    time: '' },
+      { name: 'ไทย',       time: '' },
+      { name: 'รัฐบาลไทย', time: '' },
+    ]
+  },
+  {
+    label: 'เสาร์-อาทิตย์',
+    items: [
+      { name: 'หวยดาวโจนส์ VIP',        time: '04:00' },
+      { name: 'หวยดาวโจนส์ STAR',       time: '04:30' },
+      { name: 'หวยลาว Extra',            time: '08:25' },
+      { name: 'นิเคอิ(เช้า) VIP',        time: '09:00' },
+      { name: 'ฮานอยอาเซียน',            time: '09:10' },
+      { name: 'จีน(เช้า) VIP',           time: '10:00' },
+      { name: 'หวยลาว TV',               time: '10:25' },
+      { name: 'ฮั่งเส็ง(เช้า) VIP',      time: '10:30' },
+      { name: 'ฮานอย HD',                time: '11:10' },
+      { name: 'ไต้หวัน VIP',             time: '11:30' },
+      { name: 'ฮานอยสตาร์',              time: '12:30' },
+      { name: 'เกาหลี VIP',              time: '12:30' },
+      { name: 'นิเคอิ(บ่าย) VIP',        time: '13:30' },
+      { name: 'หวยลาว HD',               time: '14:00' },
+      { name: 'หวยฮานอย TV',             time: '14:30' },
+      { name: 'จีน(บ่าย) VIP',           time: '14:45' },
+      { name: 'ฮั่งเส็ง(บ่าย) VIP',      time: '15:00' },
+      { name: 'หวยลาวสตาร์',             time: '15:00' },
+      { name: 'หวยฮานอยกาชาด',           time: '16:00' },
+      { name: 'สิงคโปร์ VIP',            time: '16:30' },
+      { name: 'ฮานอยสามัคคี',            time: '17:00' },
+      { name: 'ฮานอยพิเศษ',              time: '16:30' },
+      { name: 'หวยมาเลย์',               time: '18:00' },
+      { name: 'หวยฮานอย',                time: '18:00' },
+      { name: 'ฮานอยพัฒนา',              time: '19:30' },
+      { name: 'หวยฮานอย VIP',            time: '19:00' },
+      { name: 'หวยลาวสามัคคี',           time: '20:00' },
+      { name: 'ลาวอาเซียน',              time: '21:00' },
+      { name: 'หวยลาว VIP',              time: '21:00' },
+      { name: 'หวยลาวสามัคคี VIP',       time: '21:30' },
+      { name: 'หวยลาว STAR VIP',         time: '21:30' },
+      { name: 'อังกฤษ VIP',              time: '22:00' },
+      { name: 'หวยฮานอย Extra',          time: '22:30' },
+      { name: 'ฮานอยดึก',               time: '23:00' },
+      { name: 'เยอรมัน VIP',             time: '22:30' },
+      { name: 'ยูโร',                    time: '23:30' },
+      { name: 'หวยลาวกาชาด',             time: '23:00' },
+      { name: 'รัสเซีย VIP',             time: '23:30' },
     ]
   }
 ];
@@ -858,15 +895,18 @@ function updateUI() {
 
 function switchSet(idx) {
   currentSet = idx;
-  const tabNamesDesktop = ['เช้า', 'บ่าย', 'นอย-ลาว', 'ดึก'];
-  const tabNamesMobile = ['เช้า', 'บ่าย', 'นอย-ลาว', 'ดึก'];
+  
+  // กำหนดชื่อแท็บสำหรับจอคอม และ จอมือถือ/iPad ให้ตรงกับ 3 แท็บ
+  const tabNamesDesktop = ['SET<br class="desktop-br"> 1', 'SET<br class="desktop-br"> 2', 'ส-อ'];
+  const tabNamesMobile = ['SET 1', 'SET 2', 'ส-อ'];
   
   document.querySelectorAll('.set-tab').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
+    // เช็คขนาดหน้าจอเพื่อเปลี่ยนสไตล์ของปุ่ม (iPad = 1024px)
     if (window.innerWidth <= 1024) {
-      t.innerHTML = tabNamesMobile[i];
+      t.innerHTML = tabNamesMobile[i] || '';
     } else {
-      t.innerHTML = tabNamesDesktop[i];
+      t.innerHTML = tabNamesDesktop[i] || '';
     }
   });
   document.getElementById('search-input').value = '';
