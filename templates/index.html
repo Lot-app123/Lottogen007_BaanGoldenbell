@@ -496,24 +496,24 @@ header {
 
   <div class="preview-area" id="preview-area">
     <div class="preview-tabs-bar" id="image-tabs">
-      <div class="image-tab active">ตัวอย่าง</div>
+      <div class="image-tab active">ตัวอย่าง (คลิกรูปเพื่อเลือก Template)</div>
     </div>
-    <div class="preview-content">
-      <!-- ห่อรูปภาพทั้ง 2 ใบให้แสดงคู่กันได้ -->
-      <div id="preview-images-wrapper" style="display:flex; gap:15px; width:100%; height:100%; justify-content:center; align-items:center;">
-        <img src="/static/B1N.jpg" class="preview-img" id="preview-b1" style="display:block; max-width:48%;">
-        <img src="/static/B2.jpg" class="preview-img" id="preview-b2" style="display:block; max-width:48%;">
-      </div>
+    <div class="preview-content" style="flex-direction: column; gap: 10px; padding: 20px;">
       
-      <div class="preview-placeholder" id="preview-placeholder" style="display:none">
-        <div class="ph-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <path d="M21 15l-5-5L5 21"/>
-          </svg>
+      <!-- โซนรูปภาพให้คลิกเลือก -->
+      <div id="preview-images-wrapper" style="display:flex; gap:15px; width:100%; justify-content:center; align-items:flex-start;">
+        
+        <!-- รูปที่ 1: ปกติ (B1) -->
+        <div class="template-img-container" id="container-b1" onclick="switchInputTemplate('normal')" style="cursor: pointer; position: relative; width: 48%; transition: 0.2s; opacity: 0.5;">
+          <img src="/static/B1N.jpg" style="width: 100%; border-radius: 8px; border: 3px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--muted);">⚪ ปกติ (B1)</div>
         </div>
-        <p>เลือกประเภทหวยแล้วกด <strong style="color:var(--gold)">สร้างรูปภาพ</strong></p>
+
+        <!-- รูปที่ 2: VIP (B2) -->
+        <div class="template-img-container" id="container-b2" onclick="switchInputTemplate('vip')" style="cursor: pointer; position: relative; width: 48%; transition: 0.2s;">
+          <img src="/static/B2.jpg" style="width: 100%; border-radius: 8px; border: 3px solid var(--gold); box-shadow: 0 4px 20px rgba(240,192,64,0.4);">
+          <div class="template-label" style="text-align: center; font-size: 13px; margin-top: 8px; font-weight: 500; color: var(--gold);">🟡 VIP (B2)</div>
+        </div>
       </div>
     </div>
   </div>
@@ -551,10 +551,8 @@ header {
               </label>
           </div>
 
-          <!-- ข้อความแจ้งเตือนเมื่ออยู่ในหน้า "ทั้งหมด" -->
-          <div id="custom-instruction" style="text-align:center; font-size:13px; color:var(--muted-2); padding:10px 0;">
-             กรุณาเลือก <b>ปกติ (B1)</b> หรือ <b>VIP (B2)</b> ด้านบน<br>เพื่อกำหนดตัวเลขเอง
-          </div>
+          <!-- ส่งค่า Template ที่เลือกไปให้ Backend -->
+          <input type="hidden" name="selected_template" id="selected_template" value="vip">
 
           <!-- ================= โซนฟอร์มของ VIP (B1) ================= -->
           <div id="inputs-vip">
@@ -680,58 +678,69 @@ header {
 </div>
 
 <script>
-// ข้อมูล SETS เหมือนเดิม ไม่มีการแก้ไข
 const SETS = [
   {
-    label: 'SET 1',
+    label: 'เช้า',
     items: [
-      { name: 'ดาวโจนส์',            time: '04:00' },
-      { name: 'ดาวโจนส์ VIP',        time: '04:00' },
-      { name: 'ดาวโจนส์ STAR',       time: '04:30' },
-      { name: 'ลาว EXTRA',          time: '08:25' },
+      { name: 'ลาว EXTRA',        time: '08:25' },
       { name: 'นิเคอิเช้า VIP',      time: '09:00' },
-      { name: 'ฮานอยอาเซียน',        time: '09:10' },
+      { name: 'ฮานอยอาเซียน',      time: '09:10' },
       { name: 'นิเคอิเช้า',          time: '09:25' },
-      { name: 'จีนเช้า VIP',         time: '10:00' },
-      { name: 'ไทยเช้า',         time: '10:00' },
-      { name: 'จีนเช้า',             time: '10:20' },
-      { name: 'ลาว TV',              time: '10:25' },
-      { name: 'ฮั่งเส็งเช้า VIP',    time: '10:30' },
-      { name: 'ฮั่งเส็งเช้า',        time: '10:55' },
-      { name: 'ฮานอย HD',            time: '11:10' },
-      { name: 'ไต้หวัน VIP',         time: '11:30' },
+      { name: 'จีนเช้า VIP',        time: '10:00' },
+      { name: 'ไทยเช้า',           time: '10:00' },
+      { name: 'จีนเช้า',            time: '10:20' },
+      { name: 'ลาว TV',           time: '10:25' },
+      { name: 'ฮั่งเส็งเช้า VIP',     time: '10:30' },
+      { name: 'ฮั่งเส็งเช้า',         time: '10:55' },
+      { name: 'ฮานอย HD',         time: '11:10' },
+      { name: 'ไต้หวัน VIP',        time: '11:30' },
       { name: 'ลาวพิเศษรอบเที่ยง',   time: '11:30' },
-      { name: 'ไต้หวัน',             time: '12:00' },
-      { name: 'ฮานอยสตาร์',          time: '12:30' },
+      { name: 'ไต้หวัน',            time: '12:00' },
+      { name: 'ฮานอยสตาร์',        time: '12:30' },
       { name: 'ไทยเที่ยง',          time: '12:30' },
-      { name: 'เกาหลี VIP',          time: '12:30' },
-      { name: 'เกาหลี',              time: '13:00' },
+      { name: 'เกาหลี VIP',        time: '12:30' },
+    ]
+  },
+  {
+    label: 'บ่าย',
+    items: [
+      { name: 'เกาหลี',            time: '13:00' },
       { name: 'นิเคอิบ่าย',          time: '13:30' },
       { name: 'นิเคอิบ่าย VIP',      time: '13:30' },
-      { name: 'ลาว HD',              time: '14:00' },
-      { name: 'จีนบ่าย',             time: '14:00' },
-      { name: 'ฮานอย TV',            time: '14:30' },
-      { name: 'ไทยบ่าย',            time: '14:30' },
-      { name: 'จีนบ่าย VIP',         time: '14:45' },
-      { name: 'ฮั่งเส็งบ่าย',        time: '15:00' },
-      { name: 'ฮั่งเส็งบ่าย VIP',    time: '15:00' },
-      { name: 'ลาวสตาร์',            time: '15:00' },
-      { name: 'ไทยเย็น',             time: '15:00' },
-      { name: 'สิงคโปร์',            time: '16:00' },
-      { name: 'ฮานอยกาชาด',          time: '16:00' },
-      { name: 'สิงคโปร์ VIP',        time: '16:30' },
-      { name: 'ฮานอยพิเศษ',          time: '16:30' },
-      { name: 'ไทยเย็น',          time: '16:30' },
-      { name: 'ฮานอยสามัคคี',        time: '17:00' },
-      { name: 'อินเดีย',             time: '17:00' },
-      { name: 'ฮานอยปกติ',           time: '18:00' },
-      { name: 'มาเลย์',              time: '18:00' },
+      { name: 'ลาว HD',           time: '14:00' },
+      { name: 'จีนบ่าย',            time: '14:00' },
+      { name: 'ฮานอย TV',         time: '14:30' },
+      { name: 'ไทยบ่าย',           time: '14:30' },
+      { name: 'จีนบ่าย VIP',        time: '14:45' },
+      { name: 'ฮั่งเส็งบ่าย',         time: '15:00' },
+      { name: 'ฮั่งเส็งบ่าย VIP',     time: '15:00' },
+      { name: 'ลาวสตาร์',          time: '15:00' },
+      { name: 'ไทยเย็น',           time: '15:00' },
+      { name: 'สิงคโปร์',           time: '16:00' },
+      { name: 'ฮานอยกาชาด',       time: '16:00' },
+      { name: 'สิงคโปร์ VIP',       time: '16:30' },
+    ]
+  },
+  {
+    label: 'นอย-ลาว',
+    items: [
+      { name: 'ฮานอยพิเศษ',        time: '16:30' },
+      { name: 'ไทยเย็น',           time: '16:30' },
+      { name: 'ฮานอยสามัคคี',       time: '17:00' },
+      { name: 'อินเดีย',            time: '17:00' },
+      { name: 'ฮานอยปกติ',         time: '18:00' },
+      { name: 'มาเลย์',            time: '18:00' },
       { name: 'อียิปต์',             time: '19:00' },
-      { name: 'ฮานอย VIP',           time: '19:00' },
-      { name: 'ฮานอยพัฒนา',          time: '19:30' },
-      { name: 'ลาวสามัคคี',          time: '20:00' },
-      { name: 'ลาวพัฒนา',            time: '20:30' },
-      { name: 'ลาวอาเซียน',          time: '21:00' },
+      { name: 'ฮานอย VIP',        time: '19:00' },
+      { name: 'ฮานอยพัฒนา',        time: '19:30' },
+      { name: 'ลาวสามัคคี',         time: '20:00' },
+      { name: 'ลาวพัฒนา',          time: '20:30' },
+      { name: 'ลาวอาเซียน',        time: '21:00' },
+    ]
+  },
+  {
+    label: 'ดึก',
+    items: [
       { name: 'ลาว VIP',             time: '21:00' },
       { name: 'ลาวสามัคคี VIP',      time: '21:30' },
       { name: 'ลาว STAR VIP',        time: '21:30' },
@@ -743,59 +752,10 @@ const SETS = [
       { name: 'เยอรมัน',             time: '23:00' },
       { name: 'ลาวกาชาด',            time: '23:00' },
       { name: 'ยูโร',                time: '23:30' },
-      { name: 'รัสเซีย VIP',         time: '23:30' }
-    ]
-  },
-  {
-    label: 'SET 2',
-    items: [
-      { name: 'ธกส',       time: '' },
-      { name: 'ออมสิน',    time: '' },
-      { name: 'ไทย',       time: '' },
-      { name: 'รัฐบาลไทย', time: '' },
-    ]
-  },
-  {
-    label: 'เสาร์-อาทิตย์',
-    items: [
-      { name: 'หวยดาวโจนส์ VIP',        time: '04:00' },
-      { name: 'หวยดาวโจนส์ STAR',       time: '04:30' },
-      { name: 'หวยลาว Extra',            time: '08:25' },
-      { name: 'นิเคอิ(เช้า) VIP',        time: '09:00' },
-      { name: 'ฮานอยอาเซียน',            time: '09:10' },
-      { name: 'จีน(เช้า) VIP',           time: '10:00' },
-      { name: 'หวยลาว TV',               time: '10:25' },
-      { name: 'ฮั่งเส็ง(เช้า) VIP',      time: '10:30' },
-      { name: 'ฮานอย HD',                time: '11:10' },
-      { name: 'ไต้หวัน VIP',             time: '11:30' },
-      { name: 'ฮานอยสตาร์',              time: '12:30' },
-      { name: 'เกาหลี VIP',              time: '12:30' },
-      { name: 'นิเคอิ(บ่าย) VIP',        time: '13:30' },
-      { name: 'หวยลาว HD',               time: '14:00' },
-      { name: 'หวยฮานอย TV',             time: '14:30' },
-      { name: 'จีน(บ่าย) VIP',           time: '14:45' },
-      { name: 'ฮั่งเส็ง(บ่าย) VIP',      time: '15:00' },
-      { name: 'หวยลาวสตาร์',             time: '15:00' },
-      { name: 'หวยฮานอยกาชาด',           time: '16:00' },
-      { name: 'สิงคโปร์ VIP',            time: '16:30' },
-      { name: 'ฮานอยสามัคคี',            time: '17:00' },
-      { name: 'ฮานอยพิเศษ',              time: '16:30' },
-      { name: 'หวยมาเลย์',               time: '18:00' },
-      { name: 'หวยฮานอย',                time: '18:00' },
-      { name: 'ฮานอยพัฒนา',              time: '19:30' },
-      { name: 'หวยฮานอย VIP',            time: '19:00' },
-      { name: 'หวยลาวสามัคคี',           time: '20:00' },
-      { name: 'ลาวอาเซียน',              time: '21:00' },
-      { name: 'หวยลาว VIP',              time: '21:00' },
-      { name: 'หวยลาวสามัคคี VIP',       time: '21:30' },
-      { name: 'หวยลาว STAR VIP',         time: '21:30' },
-      { name: 'อังกฤษ VIP',              time: '22:00' },
-      { name: 'หวยฮานอย Extra',          time: '22:30' },
-      { name: 'ฮานอยดึก',               time: '23:00' },
-      { name: 'เยอรมัน VIP',             time: '22:30' },
-      { name: 'ยูโร',                    time: '23:30' },
-      { name: 'หวยลาวกาชาด',             time: '23:00' },
-      { name: 'รัสเซีย VIP',             time: '23:30' },
+      { name: 'รัสเซีย VIP',         time: '23:30' },
+      { name: 'ดาวโจนส์',            time: '04:00' },
+      { name: 'ดาวโจนส์ VIP',        time: '04:00' },
+      { name: 'ดาวโจนส์ STAR',       time: '04:30' },
     ]
   }
 ];
@@ -808,8 +768,8 @@ function togglePreview() {
   previewOpen = !previewOpen;
   const area = document.getElementById('preview-area');
   const btn  = document.getElementById('preview-toggle-btn');
-  area.classList.toggle('expanded', previewOpen);
-  btn.classList.toggle('active', previewOpen);
+  if(area) area.classList.toggle('expanded', previewOpen);
+  if(btn) btn.classList.toggle('active', previewOpen);
 }
 
 function updateClock() {
@@ -838,22 +798,6 @@ function renderList() {
 
   let filtered = setData.items;
 
-  // รายชื่อหวยที่ต้องการให้เป็น VIP (ใบ B2)
-  const vipList = [
-    "ฮานอยพิเศษ", "ฮานอยสามัคคี", "ฮานอยปกติ", 
-    "ฮานอย VIP", "ฮานอยพัฒนา", "ลาวพัฒนา", "รัฐบาลไทย"
-  ];
-
-  // 1. กรองตาม Template ที่เลือก
-  if (currentUiTemplate === 'vip') {
-    // โหมด VIP: โชว์เฉพาะหวยที่มีชื่อตรงกับใน vipList
-    filtered = filtered.filter(i => vipList.includes(i.name));
-  } else if (currentUiTemplate === 'normal') {
-    // โหมดปกติ: โชว์เฉพาะหวยที่ "ไม่อยู่" ใน vipList
-    filtered = filtered.filter(i => !vipList.includes(i.name));
-  }
-
-  // 2. กรองตามคำค้นหา (Search)
   if (q) {
     filtered = filtered.filter(i => i.name.toLowerCase().includes(q.toLowerCase()));
   }
@@ -867,7 +811,6 @@ function renderList() {
   filtered.forEach(item => {
     const key = `${currentSet}:${item.name}`;
     const isChecked = selected.has(key);
-    // ... (โค้ดสร้าง list HTML ด้านล่างยังคงเหมือนเดิมครับ) ...
     const row = document.createElement('label');
     row.className = 'lottery-row' + (isChecked ? ' checked' : '');
     row.innerHTML = `
@@ -915,8 +858,8 @@ function updateUI() {
 
 function switchSet(idx) {
   currentSet = idx;
-  const tabNamesDesktop = ['SET<br class="desktop-br"> 1', 'SET<br class="desktop-br"> 2', 'ส-อ'];
-  const tabNamesMobile = ['SET 1', 'SET 2', 'ส-อ'];
+  const tabNamesDesktop = ['เช้า', 'บ่าย', 'นอย-ลาว', 'ดึก'];
+  const tabNamesMobile = ['เช้า', 'บ่าย', 'นอย-ลาว', 'ดึก'];
   
   document.querySelectorAll('.set-tab').forEach((t, i) => {
     t.classList.toggle('active', i === idx);
@@ -939,15 +882,63 @@ function toggleAll(checked) {
   renderList();
 }
 
-// ─── ระบบเปิด/ปิด โซนกำหนดตัวเลข ───
+// ─── ระบบสลับฟอร์มและเปลี่ยนรูปภาพ ───
+let currentUiTemplate = 'vip';
+
+function switchInputTemplate(templateType) {
+  currentUiTemplate = templateType;
+  document.getElementById('selected_template').value = templateType; 
+  
+  const formB1 = document.getElementById('inputs-vip');    // ใช้อ้างอิงใบ B1 (ระบบปกติ)
+  const formB2 = document.getElementById('inputs-normal'); // ใช้อ้างอิงใบ B2 (ระบบ VIP)
+  
+  const containerB1 = document.getElementById('container-b1');
+  const containerB2 = document.getElementById('container-b2');
+
+  if (templateType === 'normal') {
+    if(formB1) formB1.style.display = 'block';
+    if(formB2) formB2.style.display = 'none';
+    
+    if(containerB1) {
+      containerB1.style.opacity = '1';
+      containerB1.querySelector('img').style.borderColor = 'var(--gold)';
+      containerB1.querySelector('.template-label').style.color = 'var(--gold)';
+    }
+    if(containerB2) {
+      containerB2.style.opacity = '0.5';
+      containerB2.querySelector('img').style.borderColor = 'transparent';
+      containerB2.querySelector('.template-label').style.color = 'var(--muted)';
+    }
+  } else if (templateType === 'vip') {
+    if(formB1) formB1.style.display = 'none';
+    if(formB2) formB2.style.display = 'block';
+    
+    if(containerB1) {
+      containerB1.style.opacity = '0.5';
+      containerB1.querySelector('img').style.borderColor = 'transparent';
+      containerB1.querySelector('.template-label').style.color = 'var(--muted)';
+    }
+    if(containerB2) {
+      containerB2.style.opacity = '1';
+      containerB2.querySelector('img').style.borderColor = 'var(--gold)';
+      containerB2.querySelector('.template-label').style.color = 'var(--gold)';
+    }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  // เริ่มต้นด้วยโหมด VIP
+  switchInputTemplate('vip');
+
   const toggleBtn = document.getElementById('toggle-inputs-btn');
   const wrapper = document.getElementById('custom-numbers-wrapper');
 
-  toggleBtn.addEventListener('click', () => {
-    toggleBtn.classList.toggle('active');
-    wrapper.classList.toggle('expanded');
-  });
+  if(toggleBtn && wrapper) {
+    toggleBtn.addEventListener('click', () => {
+      toggleBtn.classList.toggle('active');
+      wrapper.classList.toggle('expanded');
+    });
+  }
   
   document.querySelectorAll('input[type="text"]').forEach(input => {
     if (input.id !== 'search-input') {
@@ -956,74 +947,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
-});
 
-// ─── ระบบสลับฟอร์มและเปลี่ยนรูปภาพ ───
-let currentUiTemplate = 'all';
-
-function switchInputTemplate(templateType) {
-  currentUiTemplate = templateType;
-  const formB1 = document.getElementById('inputs-vip');    // ฟอร์มของ ปกติ (B1)
-  const formB2 = document.getElementById('inputs-normal'); // ฟอร์มของ VIP (B2)
-  const instruction = document.getElementById('custom-instruction');
-  
-  const lblAll = document.getElementById('lbl-all');
-  const lblNormal = document.getElementById('lbl-normal');
-  const lblVip = document.getElementById('lbl-vip');
-  
-  const imgB1 = document.getElementById('preview-b1');
-  const imgB2 = document.getElementById('preview-b2');
-
-  // รีเซ็ตสี
-  lblAll.style.color = 'var(--muted)';
-  lblNormal.style.color = 'var(--muted)';
-  lblVip.style.color = 'var(--muted)';
-
-  if (templateType === 'all') {
-    formB1.style.display = 'none';
-    formB2.style.display = 'none';
-    instruction.style.display = 'block';
-    lblAll.style.color = 'var(--gold)';
-    
-    imgB1.style.display = 'block';
-    imgB2.style.display = 'block';
-    imgB1.style.maxWidth = '48%';
-    imgB2.style.maxWidth = '48%';
-  } else if (templateType === 'normal') {
-    formB1.style.display = 'block';
-    formB2.style.display = 'none';
-    instruction.style.display = 'none';
-    lblNormal.style.color = 'var(--gold)';
-    
-    imgB1.style.display = 'block';
-    imgB2.style.display = 'none';
-    imgB1.style.maxWidth = '100%';
-  } else if (templateType === 'vip') {
-    formB1.style.display = 'none';
-    formB2.style.display = 'block';
-    instruction.style.display = 'none';
-    lblVip.style.color = 'var(--gold)';
-    
-    imgB1.style.display = 'none';
-    imgB2.style.display = 'block';
-    imgB2.style.maxWidth = '100%';
-  }
-  
-  // อัปเดตรายการหวย (และล้างการเลือกที่ค้างอยู่ป้องกัน Error)
-  document.getElementById('search-input').value = '';
-  selected.clear();
-  renderList();
-}
-
-// เมื่อโหลดหน้าเว็บ ให้รันหน้าเริ่มต้นเป็นโหมด 'ทั้งหมด'
-document.addEventListener("DOMContentLoaded", () => {
-  switchInputTemplate('all');
-});
-
-// ─── ระบบตรวจสอบตัวเลขแบบ Real-time (Frontend Validation) ───
-document.addEventListener("DOMContentLoaded", () => {
+  // ─── ระบบตรวจสอบตัวเลขแบบ Real-time (Frontend Validation) ───
   const form = document.getElementById('main-form');
-
+  const container = document.querySelector('.custom-numbers-container');
   const errorMsgBox = document.createElement('div');
   errorMsgBox.style.color = 'var(--red)';
   errorMsgBox.style.fontSize = '12px';
@@ -1032,7 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
   errorMsgBox.style.minHeight = '18px';
   errorMsgBox.style.marginTop = '6px';
   errorMsgBox.style.transition = 'transform 0.2s';
-  document.querySelector('.custom-numbers-container').appendChild(errorMsgBox);
+  if(container) container.appendChild(errorMsgBox);
 
   let hasValidationError = false;
 
@@ -1043,12 +970,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('.custom-numbers-container input').forEach(input => input.style.borderColor = '');
     errorMsgBox.textContent = '';
 
-    // ถ้าอยู่โหมด "ทั้งหมด" ไม่ต้องตรวจสอบเพราะกล่องพิมพ์ซ่อนอยู่
-    if (currentUiTemplate === 'all') return;
-
     if (currentUiTemplate === 'normal') {
-      const v_m1 = document.querySelector('input[name="v_main1"]').value;
-      const v_m2 = document.querySelector('input[name="v_main2"]').value;
+      const v_m1 = document.querySelector('input[name="v_main1"]')?.value;
+      const v_m2 = document.querySelector('input[name="v_main2"]')?.value;
       const vPairs1 = [
         document.querySelector('input[name="v_pair1"]'), document.querySelector('input[name="v_pair2"]'), document.querySelector('input[name="v_pair3"]')
       ];
@@ -1058,6 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let seenPairs = new Set();
       vPairs1.forEach((input, index) => {
+        if(!input) return;
         let val = input.value;
         if (val.length === 1) hasValidationError = true;
         if (val.length === 2) {
@@ -1069,6 +994,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       seenPairs.clear();
       vPairs2.forEach((input, index) => {
+        if(!input) return;
         let val = input.value;
         if (val.length === 1) hasValidationError = true;
         if (val.length === 2) {
@@ -1085,6 +1011,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { el: document.querySelector('input[name="triple3"]'), target: v_m1, name: 'รูด' }
       ];
       triples.forEach((t, index) => {
+        if(!t.el) return;
         let val = t.el.value;
         if (val.length > 0 && val.length < 3) hasValidationError = true;
         if (val.length === 3) {
@@ -1094,7 +1021,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     } else if (currentUiTemplate === 'vip') {
-      const n_m1 = document.querySelector('input[name="n_main1"]').value;
+      const n_m1 = document.querySelector('input[name="n_main1"]')?.value;
       const nPairs = [
         document.querySelector('input[name="n_pair1"]'), document.querySelector('input[name="n_pair2"]'), document.querySelector('input[name="n_pair3"]'),
         document.querySelector('input[name="n_pair4"]'), document.querySelector('input[name="n_pair5"]'), document.querySelector('input[name="n_pair6"]')
@@ -1103,6 +1030,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let seenPairs = new Set();
       nPairs.forEach((input, index) => {
+        if(!input) return;
         let val = input.value;
         if (val.length === 1) hasValidationError = true;
         if (val.length === 2) {
@@ -1113,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      if (nFour.value.length > 0 && nFour.value.length < 4) {
+      if (nFour && nFour.value.length > 0 && nFour.value.length < 4) {
         errors.push(`เลข 4 ตัวต้องระบุให้ครบ 4 หลัก`);
         nFour.style.borderColor = 'var(--red)';
         hasValidationError = true;
@@ -1126,21 +1054,20 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.custom-numbers-container input[type="text"]').forEach(el => {
      el.addEventListener('input', validateInputs);
   });
-  document.querySelectorAll('input[name="ui_template"]').forEach(radio => {
-     radio.addEventListener('change', validateInputs);
-  });
 
-  form.addEventListener('submit', function(e) {
-     validateInputs(); 
-     if (hasValidationError) {
-        e.preventDefault(); 
-        errorMsgBox.style.transform = 'scale(1.05)';
-        setTimeout(() => errorMsgBox.style.transform = 'scale(1)', 150);
-        return;
-     }
-     document.getElementById('loading').classList.add('show');
-     setTimeout(() => { document.getElementById('loading').classList.remove('show'); }, 4000);
-  });
+  if(form) {
+    form.addEventListener('submit', function(e) {
+       validateInputs(); 
+       if (hasValidationError) {
+          e.preventDefault(); 
+          errorMsgBox.style.transform = 'scale(1.05)';
+          setTimeout(() => errorMsgBox.style.transform = 'scale(1)', 150);
+          return;
+       }
+       document.getElementById('loading').classList.add('show');
+       setTimeout(() => { document.getElementById('loading').classList.remove('show'); }, 4000);
+    });
+  }
 });
 
 renderList();
@@ -1154,7 +1081,6 @@ window.addEventListener('resize', () => {
 if (window.innerWidth <= 1024) {
   document.querySelectorAll('.desktop-br').forEach(br => br.style.display = 'none');
 }
-
 </script>
 </body>
 </html>
