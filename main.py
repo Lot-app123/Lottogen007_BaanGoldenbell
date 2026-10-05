@@ -223,12 +223,13 @@ async def lottery_page(request: Request, user: CurrentUser):
 async def lottery_generate(
     user: CurrentUser,
     lottery_type: list[str] = Form(...),
-    # VIP Inputs
+    selected_template: str = Form("vip"),  # รับค่า Template ที่เลือกจากหน้าเว็บ
+    # VIP Inputs (B1)
     v_main1: Optional[str] = Form(None), v_main2: Optional[str] = Form(None),
     v_pair1: Optional[str] = Form(None), v_pair2: Optional[str] = Form(None), v_pair3: Optional[str] = Form(None),
     v_pair4: Optional[str] = Form(None), v_pair5: Optional[str] = Form(None), v_pair6: Optional[str] = Form(None), 
     triple1: Optional[str] = Form(None), triple2: Optional[str] = Form(None), triple3: Optional[str] = Form(None), 
-    # Normal Inputs
+    # Normal Inputs (B2)
     n_main1: Optional[str] = Form(None), 
     n_pair1: Optional[str] = Form(None), n_pair2: Optional[str] = Form(None), n_pair3: Optional[str] = Form(None), 
     n_pair4: Optional[str] = Form(None), n_pair5: Optional[str] = Form(None), n_pair6: Optional[str] = Form(None), 
@@ -244,19 +245,13 @@ async def lottery_generate(
     
     parsed_items.sort(key=lambda x: x["time"] if x["time"] else "99:99")
 
-    # ฟังก์ชันช่วยเลือกวาดตามเงื่อนไขที่กำหนด
+    # ฟังก์ชันช่วยเลือกวาดตาม Template ที่คลิกเลือกหน้าเว็บ
     def generate_bytes_for_item(name_str):
-        # กำหนดรายชื่อหวยที่จะใช้ใบ B2 (VIP)
-        vip_list = [
-            "ฮานอยพิเศษ", "ฮานอยสามัคคี", "ฮานอยปกติ", 
-            "ฮานอย VIP", "ฮานอยพัฒนา", "ลาวพัฒนา", "รัฐบาลไทย"
-        ]
-        
-        if name_str in vip_list:
-            # ถ้าชื่อตรงกับในลิสต์ -> ใช้ใบ B2 (create_image_normal)
+        if selected_template == "vip":
+            # ถ้าเลือกแท็บ VIP (ใบ B2)
             return create_image_normal(name_str, n_main1, n_pair1, n_pair2, n_pair3, n_pair4, n_pair5, n_pair6, fournum)
         else:
-            # หวยอื่นๆ ที่เหลือทั้งหมด -> ใช้ใบ B1 (create_image_vip)
+            # ถ้าเลือกแท็บ ปกติ (ใบ B1)
             return create_image_vip(name_str, v_main1, v_main2, v_pair1, v_pair2, v_pair3, v_pair4, v_pair5, v_pair6, triple1, triple2, triple3)
 
     if len(parsed_items) == 1:
@@ -273,8 +268,3 @@ async def lottery_generate(
             zf.writestr(filename, generate_bytes_for_item(item['name']))
     zip_buf.seek(0)
     return StreamingResponse(zip_buf, media_type="application/zip", headers={"Content-Disposition": 'attachment; filename="lottery_results.zip"'})
-
-if __name__ == "__main__":
-    import os
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=False)
